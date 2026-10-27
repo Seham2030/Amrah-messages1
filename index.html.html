@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هناك رسالة تنتظركِ 💌 - مدرسة عمرة بنت الربيع</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Amiri, Cairo & Tajawal) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti JS -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            pink: '#FDF2F8',
+                            pinkDark: '#F472B6',
+                            rose: '#FB7185',
+                            purple: '#FAF5FF',
+                            purpleDark: '#C084FC',
+                            gold: '#D97706',
+                            goldLight: '#FDE68A',
+                            accent: '#EC4899',
+                            slate: '#475569'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        amiri: ['Amiri', 'serif'],
+                        tajawal: ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #fdf2f8 0%, #faf5ff 50%, #f0fdf4 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Floating Magic Elements */
+        .floating-bg-item {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.25;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        /* Interactive Envelope Animation Styles */
+        .envelope-wrapper {
+            perspective: 1000px;
+        }
+
+        .envelope {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            background: #f472b6;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(236, 72, 153, 0.2);
+            transition: transform 0.6s ease;
+            cursor: pointer;
+        }
+
+        @media (min-width: 640px) {
+            .envelope {
+                width: 420px;
+                height: 270px;
+            }
+        }
+
+        .envelope .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 130px solid #ec4899;
+            transform-origin: top;
+            transition: transform 0.6s ease, z-index 0.2s ease;
+            z-index: 3;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));
+        }
+
+        @media (min-width: 640px) {
+            .envelope .flap {
+                border-left-width: 210px;
+                border-right-width: 210px;
+                border-top-width: 150px;
+            }
+        }
+
+        .envelope .pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-left: 160px solid #fbcfe8;
+            border-right: 160px solid #fbcfe8;
+            border-bottom: 120px solid #f9a8d4;
+            border-radius: 0 0 12px 12px;
+            z-index: 2;
+        }
+
+        @media (min-width: 640px) {
+            .envelope .pocket {
+                border-left-width: 210px;
+                border-right-width: 210px;
+                border-bottom-width: 150px;
+            }
+        }
+
+        .envelope .letter-preview {
+            position: absolute;
+            bottom: 10px;
+            left: 5%;
+            width: 90%;
+            height: 80%;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 1;
+            transition: transform 0.6s ease, opacity 0.4s ease;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .envelope.open .flap {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .envelope.open .letter-preview {
+            transform: translateY(-80px);
+        }
+
+        /* Printable Area Custom Styling */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printableCard, #printableCard * {
+                visibility: visible;
+            }
+            #printableCard {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none !important;
+                border: 2px solid #ec4899 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdf2f8;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f472b6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="relative flex flex-col justify-between text-slate-800">
+
+    <!-- Dynamic Background Shapes & Icons -->
+    <div id="bgDecorations" class="fixed inset-0 overflow-hidden z-0">
+        <i class="fa-solid fa-heart floating-bg-item text-pink-300 text-3xl" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
+        <i class="fa-solid fa-envelope floating-bg-item text-purple-300 text-4xl" style="top: 25%; right: 10%; animation-delay: 1.5s;"></i>
+        <i class="fa-solid fa-star floating-bg-item text-amber-300 text-2xl" style="top: 65%; left: 8%; animation-delay: 3s;"></i>
+        <i class="fa-solid fa-heart floating-bg-item text-rose-300 text-4xl" style="top: 80%; right: 20%; animation-delay: 2s;"></i>
+        <i class="fa-solid fa-sparkles floating-bg-item text-pink-400 text-3xl" style="top: 45%; left: 80%; animation-delay: 0.5s;"></i>
+        <i class="fa-solid fa-feather floating-bg-item text-purple-400 text-3xl" style="top: 15%; left: 50%; animation-delay: 2.5s;"></i>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <header class="relative z-10 w-full p-4 md:px-8 flex justify-between items-center border-b border-pink-100/60 bg-white/40 backdrop-blur-md">
+        <div class="flex items-center gap-3">
+            <div class="bg-gradient-to-tr from-pink-400 to-purple-400 p-2.5 rounded-2xl text-white shadow-md">
+                <i class="fa-solid fa-envelope-open-text text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg text-slate-800 leading-tight">مدرسة عمرة بنت الربيع</h1>
+                <p class="text-xs text-pink-600 font-medium">مبادرة الرسائل التحفيزية الإيجابية</p>
+            </div>
+        </div>
+
+        <button onclick="openAdminModal()" class="flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-white text-slate-700 hover:text-pink-600 border border-pink-200 rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow-md">
+            <i class="fa-solid fa-user-gear text-pink-500"></i>
+            <span class="hidden sm:inline">لوحة المعلمة</span>
+        </button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="relative z-10 my-auto py-8 px-4 flex flex-col items-center justify-center max-w-4xl mx-auto w-full">
+
+        <!-- STEP 1: Search View (Landing Page) -->
+        <section id="searchStep" class="w-full text-center space-y-6 transition-all duration-500">
+            <div class="inline-block bg-pink-100/80 text-pink-700 px-4 py-1.5 rounded-full text-sm font-semibold mb-2 border border-pink-200 shadow-sm animate-pulse">
+                ✨ رسالة خاصة تنتظر إشراقتكِ
+            </div>
+
+            <h2 class="text-3xl md:text-5xl font-extrabold text-slate-800 leading-tight">
+                هناك رسالة تنتظركِ <span class="inline-block hover:scale-125 transition-transform duration-300">💌</span>
+            </h2>
+
+            <p class="text-base md:text-lg text-slate-600 max-w-lg mx-auto font-medium">
+                «معكِ رسالة مميزة، كُتبت لكِ وحدكِ.. بعض الكلمات تشبه الهدية، وهذه الكلمات كُتبت من أجلكِ»
+            </p>
+
+            <!-- Search Form Card -->
+            <div class="bg-white/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-xl border border-white max-w-md mx-auto relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-28 h-28 bg-pink-100 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-purple-100 rounded-full blur-2xl pointer-events-none"></div>
+
+                <form onsubmit="handleSearch(event)" class="space-y-5 relative z-10">
+                    <div class="text-right">
+                        <label for="employeeName" class="block text-xs font-bold text-slate-600 mb-2">أدخلي اسمكِ الكريم (الأول والثاني):</label>
+                        <div class="relative">
+                            <input type="text" id="employeeName" placeholder="مثال: أمل الشمري" required
+                                   class="w-full px-4 py-3.5 pl-10 rounded-2xl border border-pink-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none transition-all text-slate-700 bg-white/90 text-right shadow-inner">
+                            <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-pink-300"></i>
+                        </div>
+                    </div>
+
+                    <!-- Custom Alert Message Container -->
+                    <div id="inputErrorMsg" class="hidden text-xs text-rose-500 bg-rose-50 p-2.5 rounded-xl border border-rose-100 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span>يرجى إدخال اسمك بشكل صحيح للبحث عن الرسالة.</span>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 px-6 bg-gradient-to-r from-pink-500 via-rose-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 hover:shadow-pink-300 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 text-base">
+                        <span>ابحثي عن رسالتكِ</span>
+                        <i class="fa-solid fa-sparkles"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- STEP 2: Envelope & Reveal View -->
+        <section id="revealStep" class="hidden w-full flex flex-col items-center justify-center space-y-6 transition-all duration-500">
+            <p class="text-pink-600 font-bold text-sm bg-pink-50 px-4 py-1.5 rounded-full border border-pink-100">
+                اضغطي على الظرف لفتح رسالتكِ المعطرة 🌸
+            </p>
+
+            <!-- Animated Interactive Envelope -->
+            <div class="envelope-wrapper my-6">
+                <div id="interactiveEnvelope" onclick="openEnvelope()" class="envelope">
+                    <div class="flap"></div>
+                    <div class="pocket"></div>
+                    <div class="letter-preview flex flex-col justify-center items-center">
+                        <i class="fa-solid fa-heart-pulse text-pink-400 text-3xl mb-1 animate-bounce"></i>
+                        <span class="text-xs font-bold text-slate-500" id="previewRecipientName">خاص بكِ</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 3: Message Card Display View -->
+        <section id="cardStep" class="hidden w-full max-w-xl mx-auto transition-all duration-700">
+            <!-- Printable Envelope / Card -->
+            <div id="printableCard" class="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-2 border-pink-100 p-6 md:p-10 relative overflow-hidden text-center space-y-6">
+                
+                <!-- Card Background Subtle Ornaments -->
+                <div class="absolute top-0 right-0 p-6 opacity-10 pointer-events-none text-pink-500">
+                    <i class="fa-solid fa-quote-right text-7xl"></i>
+                </div>
+                <div class="absolute bottom-0 left-0 p-6 opacity-10 pointer-events-none text-purple-500">
+                    <i class="fa-solid fa-heart text-7xl"></i>
+                </div>
+
+                <!-- Header Badge -->
+                <div class="inline-flex items-center gap-2 bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 px-4 py-1.5 rounded-full text-xs font-extrabold border border-pink-200">
+                    <i class="fa-solid fa-heart text-pink-500"></i>
+                    <span>رسالة من القلب إليكِ 💗</span>
+                </div>
+
+                <!-- Recipient Title -->
+                <div>
+                    <span class="text-xs font-semibold text-slate-400 block mb-1">إلى المتميزة دائماً</span>
+                    <h3 id="displayRecipient" class="text-2xl md:text-3xl font-extrabold text-slate-800 font-cairo text-pink-600"></h3>
+                </div>
+
+                <!-- Divider -->
+                <div class="flex items-center justify-center gap-2 my-2">
+                    <span class="h-0.5 w-12 bg-gradient-to-r from-transparent to-pink-200 rounded-full"></span>
+                    <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                    <span class="h-0.5 w-12 bg-gradient-to-l from-transparent to-pink-200 rounded-full"></span>
+                </div>
+
+                <!-- Motivational Content Body -->
+                <div class="py-2 px-2 md:px-6">
+                    <p id="displayMessage" class="text-slate-700 font-amiri text-xl md:text-2xl leading-relaxed font-semibold text-justify md:text-center">
+                    </p>
+                </div>
+
+                <!-- Closing Line -->
+                <p class="text-xs md:text-sm font-bold text-purple-600 bg-purple-50/70 py-2 px-4 rounded-xl inline-block border border-purple-100">
+                    ✨ أنا فخورة بكِ، وأؤمن أن القادم أجمل دائماً ✨
+                </p>
+
+                <!-- Footer Signature -->
+                <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+                    <span class="font-medium text-slate-400">مدرسة عمرة بنت الربيع 🏫</span>
+                    <div class="font-bold text-pink-600 text-sm font-cairo">
+                        أختكِ: أ. سهام الشهري 🌸
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons (Non-Printable) -->
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-3 no-print">
+                <button onclick="printCard()" class="px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs md:text-sm rounded-xl border border-slate-200 shadow-sm hover:shadow transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-print text-pink-500"></i>
+                    <span>اطبعي رسالتي</span>
+                </button>
+
+                <button onclick="showRandomExtraMessage()" class="px-5 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs md:text-sm rounded-xl border border-purple-200 shadow-sm hover:shadow transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles text-purple-500"></i>
+                    <span>رسالة إضافية</span>
+                </button>
+
+                <button onclick="resetSearch()" class="px-5 py-2.5 bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs md:text-sm rounded-xl shadow-md transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    <span>العودة للبداية</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-4 text-center text-xs text-slate-600 bg-white/30 backdrop-blur-sm border-t border-pink-100/50">
+        <p>جميع الحقوق محفوظة © مدرسة عمرة بنت الربيع | إعداد أ. سهام الشهري 🌸</p>
+    </footer>
+
+    <!-- ADMIN PANEL MODAL -->
+    <div id="adminModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl border border-pink-100 w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+            
+            <!-- Modal Header -->
+            <div class="p-5 bg-gradient-to-r from-pink-500 to-purple-600 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-sliders text-xl"></i>
+                    <div>
+                        <h3 class="font-bold text-base">لوحة تحكم المعلمة</h3>
+                        <p class="text-xs text-pink-100">إدارة منسوبات المدرسة والرسائل التحفيزية</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- PIN Auth Overlay (Shown if not logged in) -->
+            <div id="adminAuthBox" class="p-8 text-center space-y-4 my-auto">
+                <div class="w-16 h-16 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h4 class="font-bold text-slate-800 text-lg">رمز دخول لوحة التحكم</h4>
+                <p class="text-xs text-slate-500 max-w-xs mx-auto">أدخلي رمز الحماية للوصول إلى بيانات الموظفات والرسائل (الرمز الافتراضي: 1234)</p>
+                <div class="max-w-xs mx-auto space-y-3">
+                    <input type="password" id="adminPinInput" placeholder="أدخلي رمز الدخول" 
+                           class="w-full text-center px-4 py-2.5 rounded-xl border border-slate-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none font-mono text-lg">
+                    <button onclick="verifyAdminPin()" class="w-full py-2.5 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-xl text-sm transition-all shadow-md">
+                        دخول اللوحة
+                    </button>
+                    <p id="pinError" class="hidden text-xs text-rose-500 font-semibold">رمز الدخول غير صحيح!</p>
+                </div>
+            </div>
+
+            <!-- Dashboard Content (Hidden until auth) -->
+            <div id="adminContentBox" class="hidden flex-1 overflow-y-auto p-6 space-y-6">
+                
+                <!-- Local Storage Disclaimer -->
+                <div class="bg-amber-50 border border-amber-200 text-amber-800 text-xs p-3.5 rounded-2xl flex items-start gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500 text-base mt-0.5"></i>
+                    <div>
+                        <span class="font-bold">تنويه تقني هام:</span> يتم حفظ التعديلات محلياً في ذاكرة هذا المتصفح فقط (LocalStorage). مسح بيانات المتصفح قد يؤدي لربط القائمة بالبيانات الافتراضية. يمكنكِ تصدير نسخة احتياطية دائماً.
+                    </div>
+                </div>
+
+                <!-- Quick Actions Bar -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button onclick="openAddEmployeeModal()" class="p-3 bg-pink-50 hover:bg-pink-100 border border-pink-200 rounded-2xl text-pink-700 text-xs font-bold flex items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-user-plus text-pink-500"></i>
+                        <span>إضافة منسوبة جديدة</span>
+                    </button>
+                    <button onclick="openBatchImportModal()" class="p-3 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-2xl text-purple-700 text-xs font-bold flex items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-import text-purple-500"></i>
+                        <span>استيراد جماعي (CSV/نص)</span>
+                    </button>
+                    <button onclick="exportDataJSON()" class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl text-emerald-700 text-xs font-bold flex items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-export text-emerald-500"></i>
+                        <span>تصدير نسخة احتياطية</span>
+                    </button>
+                </div>
+
+                <!-- Database Employees List Header & Table -->
+                <div class="border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="bg-slate-50 p-3.5 border-b border-slate-100 flex items-center justify-between">
+                        <span class="font-bold text-xs text-slate-700">قائمة المنسوبات والرسائل المخصصة (<span id="empCount">0</span>)</span>
+                        <input type="text" id="adminSearchInput" oninput="renderAdminTable()" placeholder="بحث باسم المنسوبة..." class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 outline-none focus:border-pink-400">
+                    </div>
+
+                    <div class="max-h-72 overflow-y-auto">
+                        <table class="w-full text-right text-xs">
+                            <thead class="bg-slate-100 text-slate-600 font-bold sticky top-0">
+                                <tr>
+                                    <th class="p-3">اسم المنسوبة</th>
+                                    <th class="p-3">الرسالة المخصصة</th>
+                                    <th class="p-3 text-center">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeesTableBody" class="divide-y divide-slate-100">
+                                <!-- Dynamic Render -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Bulk Random Generator Section -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                    <h5 class="font-bold text-xs text-slate-700">توليد رسائل عشوائية</h5>
+                    <p class="text-[11px] text-slate-500">يمكنك ملء الرسائل الفارغة تلقائياً بأجمل العبارات التحفيزية من المكتبة المدمجة.</p>
+                    <button onclick="fillEmptyWithRandom()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm">
+                        توليد رسائل متبقية عشوائياً 🎲
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div id="adminFooter" class="hidden p-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center text-xs">
+                <button onclick="resetDefaultData()" class="text-rose-500 hover:text-rose-700 font-semibold underline">
+                    استعادة البيانات الافتراضية
+                </button>
+                <button onclick="closeAdminModal()" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-all">
+                    إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD / EDIT EMPLOYEE MODAL -->
+    <div id="editEmployeeModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-pink-100 space-y-4">
+            <h4 id="editModalTitle" class="font-bold text-slate-800 text-base">إضافة منسوبة جديده</h4>
+            
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-600 mb-1">اسم المنسوبة:</label>
+                    <input type="text" id="editEmpName" placeholder="مثال: نورة العتيبي" class="w-full p-3 rounded-xl border border-slate-200 outline-none focus:border-pink-500">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block font-bold text-slate-600">الرسالة التحفيزية الخاصّة:</label>
+                        <button type="button" onclick="generateRandomSingleText()" class="text-pink-600 font-bold hover:underline">اختيار عشوائي ✨</button>
+                    </div>
+                    <textarea id="editEmpMsg" rows="4" placeholder="اكتبي رسالة دافئة ومخصصة..." class="w-full p-3 rounded-xl border border-slate-200 outline-none focus:border-pink-500 leading-relaxed"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeEditModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold">إلغاء</button>
+                <button onclick="saveEmployeeData()" class="px-5 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold shadow">حفظ البيانات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BATCH IMPORT MODAL -->
+    <div id="batchModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-purple-100 space-y-4">
+            <h4 class="font-bold text-slate-800 text-base">استيراد الأسماء دفعة واحدة</h4>
+            <p class="text-xs text-slate-500">ضع الأسماء في الصندوق أدناه (اسم في كل سطر)، وسيتم إنشاؤهم وتوليد رسائل ملهمة لهم تلقائياً.</p>
+            
+            <textarea id="batchInputText" rows="6" placeholder="مريم الغامدي&#10;فاطمة الشهري&#10;عبير الحارثي" class="w-full p-3 rounded-xl border border-slate-200 outline-none focus:border-purple-500 text-xs leading-relaxed"></textarea>
+
+            <div class="flex justify-end gap-2">
+                <button onclick="closeBatchModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold">إلغاء</button>
+                <button onclick="processBatchImport()" class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow">استيراد الأسماء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT LOGIC -->
+    <script>
+        // Default Motivational Library Array
+        const motivationalMessagesLibrary = [
+            "عطاءكِ المستمر وأثركِ الناصع يزهران في كل زاوية من زوايا المدرسة. شكراً لطاقتكِ الإيجابية وإخلاصكِ الذي يلهِمُ الجميع.",
+            "إبداعكِ وتفانيكِ ليس مجرد عمل، بل هو شغف يترك أثراً دافئاً في قلوب الجميع. واصلي إشراقكِ المميز.",
+            "حضوركِ المشرق وروحكِ الطيبة يضفيان دفئاً وجمالاً خاصاً. أنتِ ركن متين ورمز للتميز والإتقان.",
+            "إن الصبر والاجتهاد الذي تبذلينه كل يوم يصنع أجيالاً وترك بصمة لا تمحى. فخورة جداً بوجودكِ معنا.",
+            "تتجاوزين التحديات بكل شجاعة ولطف، وثقتكِ بنفسكِ تعكس روح المعلمة والمنسوبة القائدة. دمِتِ مصدر إلهام.",
+            "كلماتكِ الطيبة وابتسامتكِ الدائمة تزرعان الأمل في نفوس الجميع. شكراً للطفكِ وعزيمتكِ الاستثنائية.",
+            "نجاحكِ وتألقكِ ليسا وليدي المصادفة، بل نتيجة لجهد مخلص وقلب يحب الإتقان. القادم أكثر إبهاراً بإذن الله.",
+            "همتكِ العالية وطموحكِ الذي لا يحده سقف يجعلون منكِ نموذجاً يحتذى به. واصلي السير بنور شغفكِ.",
+            "لكل مجتهدة نصيب من الثناء، وأنتِ تستحقين كل التقدير والامتنان على عطائكِ الصادق والنابع من القلب.",
+            "وجودكِ بيننا يضيف قيمة حقيقية وجمالاً راقياً. شكراً لأنكِ تصنعين الفرق في كل يوم بإخلاصكِ."
+        ];
+
+        // Default Initial Staff Database
+        const defaultStaffList = [
+            { id: '1', name: 'سارة الشهري', message: 'عطاءكِ المستمر وأثركِ الناصع يزهران في كل زاوية من زوايا المدرسة. شكراً لطاقتكِ الإيجابية وإخلاصكِ الذي يلهِمُ الجميع.' },
+            { id: '2', name: 'منى الغامدي', message: 'إبداعكِ وتفانيكِ ليس مجرد عمل، بل هو شغف يترك أثراً دافئاً في قلوب الجميع. واصلي إشراقكِ المميز.' },
+            { id: '3', name: 'فاطمة العتيبي', message: 'حضوركِ المشرق وروحكِ الطيبة يضفيان دفئاً وجمالاً خاصاً. أنتِ ركن متين ورمز للتميز والإتقان.' },
+            { id: '4', name: 'أمل القحطاني', message: 'إن الصبر والاجتهاد الذي تبذلينه كل يوم يصنع أجيالاً وترك بصمة لا تمحى. فخورة جداً بوجودكِ معنا.' },
+            { id: '5', name: 'ريم الزهراني', message: 'تتجاوزين التحديات بكل شجاعة ولطف، وثقتكِ بنفسكِ تعكس روح المعلمة القائدة. دمِتِ مصدر إلهام.' }
+        ];
+
+        // State Management
+        let staffDatabase = [];
+        let currentFoundRecipient = '';
+        let currentFoundMessage = '';
+        let editingStaffId = null;
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDatabase();
+        });
+
+        // Local Storage Helper Functions
+        function loadDatabase() {
+            const saved = localStorage.getItem('omrah_staff_db');
+            if (saved) {
+                try {
+                    staffDatabase = JSON.parse(saved);
+                } catch (e) {
+                    staffDatabase = [...defaultStaffList];
+                }
+            } else {
+                staffDatabase = [...defaultStaffList];
+                saveDatabase();
+            }
+        }
+
+        function saveDatabase() {
+            localStorage.setItem('omrah_staff_db', JSON.stringify(staffDatabase));
+        }
+
+        // Arabic Name Normalization to reduce match errors
+        function normalizeArabicName(str) {
+            if (!str) return '';
+            return str.trim()
+                      .replace(/[أإآ]/g, 'ا')
+                      .replace(/ة/g, 'ه')
+                      .replace(/ى/g, 'ي')
+                      .replace(/\s+/g, ' ');
+        }
+
+        // Search Action Handling
+        function handleSearch(e) {
+            e.preventDefault();
+            const inputVal = document.getElementById('employeeName').value.trim();
+            const errorContainer = document.getElementById('inputErrorMsg');
+
+            if (!inputVal) {
+                errorContainer.classList.remove('hidden');
+                return;
+            }
+            errorContainer.classList.add('hidden');
+
+            const normalizedInput = normalizeArabicName(inputVal);
+            
+            // Search logic with flex match
+            let matchedStaff = staffDatabase.find(emp => {
+                const normDbName = normalizeArabicName(emp.name);
+                return normDbName.includes(normalizedInput) || normalizedInput.includes(normDbName);
+            });
+
+            if (matchedStaff) {
+                currentFoundRecipient = matchedStaff.name;
+                currentFoundMessage = matchedStaff.message || getRandomLibraryMessage();
+            } else {
+                // Friendly fallback for non-existing names without showing scary errors
+                currentFoundRecipient = inputVal;
+                currentFoundMessage = getRandomLibraryMessage();
+            }
+
+            // Prepare Reveal Step
+            document.getElementById('previewRecipientName').textContent = currentFoundRecipient;
+            document.getElementById('displayRecipient').textContent = currentFoundRecipient;
+            document.getElementById('displayMessage').textContent = `«${currentFoundMessage}»`;
+
+            // Switch Screen Step
+            document.getElementById('searchStep').classList.add('hidden');
+            document.getElementById('revealStep').classList.remove('hidden');
+        }
+
+        // Random Message Utility
+        function getRandomLibraryMessage() {
+            const index = Math.floor(Math.random() * motivationalMessagesLibrary.length);
+            return motivationalMessagesLibrary[index];
+        }
+
+        // Envelope Open Event
+        function openEnvelope() {
+            const env = document.getElementById('interactiveEnvelope');
+            env.classList.add('open');
+
+            // Trigger Confetti Effect
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 70,
+                    spread: 60,
+                    origin: { y: 0.6 },
+                    colors: ['#f472b6', '#c084fc', '#fde68a', '#fb7185']
+                });
+            }
+
+            // Transition to Final Card Display
+            setTimeout(() => {
+                document.getElementById('revealStep').classList.add('hidden');
+                document.getElementById('cardStep').classList.remove('hidden');
+            }, 1000);
+        }
+
+        // Show Extra Random Message Action
+        function showRandomExtraMessage() {
+            const extraMsg = getRandomLibraryMessage();
+            document.getElementById('displayMessage').textContent = `«${extraMsg}»`;
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 30, spread: 40, origin: { y: 0.7 } });
+            }
+        }
+
+        // Reset App to Start
+        function resetSearch() {
+            document.getElementById('employeeName').value = '';
+            document.getElementById('interactiveEnvelope').classList.remove('open');
+            document.getElementById('cardStep').classList.add('hidden');
+            document.getElementById('revealStep').classList.add('hidden');
+            document.getElementById('searchStep').classList.remove('hidden');
+        }
+
+        // Print Card Helper
+        function printCard() {
+            window.print();
+        }
+
+        /* ---------------- ADMIN PANEL LOGIC ---------------- */
+
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function verifyAdminPin() {
+            const pin = document.getElementById('adminPinInput').value;
+            const pinErr = document.getElementById('pinError');
+            
+            // Simple default PIN protection as specified
+            if (pin === '1234' || pin === '0000') {
+                pinErr.classList.add('hidden');
+                document.getElementById('adminAuthBox').classList.add('hidden');
+                document.getElementById('adminContentBox').classList.remove('hidden');
+                document.getElementById('adminFooter').classList.remove('hidden');
+                renderAdminTable();
+            } else {
+                pinErr.classList.remove('hidden');
+            }
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('employeesTableBody');
+            const searchVal = normalizeArabicName(document.getElementById('adminSearchInput').value);
+            tbody.innerHTML = '';
+
+            const filtered = staffDatabase.filter(emp => normalizeArabicName(emp.name).includes(searchVal));
+            document.getElementById('empCount').textContent = staffDatabase.length;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">لا توجد منسوبات مطابقة للبحث</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(emp => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-50 hover:bg-slate-50/80 transition-colors';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-700">${emp.name}</td>
+                    <td class="p-3 text-slate-500 max-w-xs truncate">${emp.message || '<span class="text-amber-500">(رسالة عشوائية)</span>'}</td>
+                    <td class="p-3 text-center space-x-1 space-x-reverse">
+                        <button onclick="editEmployee('${emp.id}')" class="p-1.5 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100" title="تعديل">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="deleteEmployee('${emp.id}')" class="p-1.5 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100" title="حذف">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openAddEmployeeModal() {
+            editingStaffId = null;
+            document.getElementById('editModalTitle').textContent = 'إضافة منسوبة جديدة';
+            document.getElementById('editEmpName').value = '';
+            document.getElementById('editEmpMsg').value = '';
+            document.getElementById('editEmployeeModal').classList.remove('hidden');
+        }
+
+        function editEmployee(id) {
+            const emp = staffDatabase.find(e => e.id === id);
+            if (!emp) return;
+            editingStaffId = id;
+            document.getElementById('editModalTitle').textContent = 'تعديل بيانات المنسوبة';
+            document.getElementById('editEmpName').value = emp.name;
+            document.getElementById('editEmpMsg').value = emp.message || '';
+            document.getElementById('editEmployeeModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editEmployeeModal').classList.add('hidden');
+        }
+
+        function saveEmployeeData() {
+            const name = document.getElementById('editEmpName').value.trim();
+            const message = document.getElementById('editEmpMsg').value.trim();
+
+            if (!name) return;
+
+            if (editingStaffId) {
+                const emp = staffDatabase.find(e => e.id === editingStaffId);
+                if (emp) {
+                    emp.name = name;
+                    emp.message = message;
+                }
+            } else {
+                staffDatabase.push({
+                    id: Date.now().toString(),
+                    name: name,
+                    message: message
+                });
+            }
+
+            saveDatabase();
+            renderAdminTable();
+            closeEditModal();
+        }
+
+        function deleteEmployee(id) {
+            staffDatabase = staffDatabase.filter(e => e.id !== id);
+            saveDatabase();
+            renderAdminTable();
+        }
+
+        function generateRandomSingleText() {
+            document.getElementById('editEmpMsg').value = getRandomLibraryMessage();
+        }
+
+        function fillEmptyWithRandom() {
+            staffDatabase.forEach(emp => {
+                if (!emp.message || emp.message.trim() === '') {
+                    emp.message = getRandomLibraryMessage();
+                }
+            });
+            saveDatabase();
+            renderAdminTable();
+        }
+
+        // Batch Import Handling
+        function openBatchImportModal() {
+            document.getElementById('batchInputText').value = '';
+            document.getElementById('batchModal').classList.remove('hidden');
+        }
+
+        function closeBatchModal() {
+            document.getElementById('batchModal').classList.add('hidden');
+        }
+
+        function processBatchImport() {
+            const rawText = document.getElementById('batchInputText').value;
+            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+            lines.forEach(name => {
+                staffDatabase.push({
+                    id: Date.now().toString() + Math.random().toString(36).substring(2, 5),
+                    name: name,
+                    message: getRandomLibraryMessage()
+                });
+            });
+
+            saveDatabase();
+            renderAdminTable();
+            closeBatchModal();
+        }
+
+        // Export Data Utility
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(staffDatabase, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "omrah_school_messages.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // Restore Defaults
+        function resetDefaultData() {
+            staffDatabase = [...defaultStaffList];
+            saveDatabase();
+            renderAdminTable();
+        }
+    </script>
+</body>
+</html>
